@@ -3,8 +3,11 @@ package com.example.demo.service;
 import com.example.demo.config.OpenAIConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -78,13 +81,12 @@ public class AIService {
 
         return webClient.post()
                 .uri(config.getBaseUrl())
-                .header("Authorization", "Bearer " + "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")
-                //.header("Authorization", "Bearer " + config.getKey())
+                .header("Authorization", "Bearer " + config.getKey())
                 .header("Content-Type", "application/json")
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(Map.class)
-                /*.retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
-                        .filter(throwable -> throwable instanceof WebClientResponseException.TooManyRequests))*/;
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2))
+                        .filter(throwable -> throwable instanceof WebClientResponseException.TooManyRequests));
     }
 }
