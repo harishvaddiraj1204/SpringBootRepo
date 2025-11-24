@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  # Spring Boot application
+  app:
+    build: .
+    container_name: springboot-app
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    environment:
+      # MongoDB connection
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/testdb
+      SPRING_AI_OPENAI_API_KEY: ${OPENAI_API_KEY}
+
+  # MongoDB
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+# Named volume for persistent data
+volumes:
+  mongo-data:
