@@ -38,5 +38,3 @@ public class AIService {
                 .bodyToMono(Map.class);
     }
 }
-
-
